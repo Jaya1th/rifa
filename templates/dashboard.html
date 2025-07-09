@@ -1,0 +1,1774 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>AI Course Completion Dashboard</title> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font
+awesome/6.4.0/css/all.min.css"> 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
+    <style> 
+        :root { 
+            --primary-dark: #0a2e1a; 
+            --primary: #1a5c2e; 
+            --primary-light: #2d8a4a; 
+            --secondary: #f5f5f5; 
+            --text-light: #e0e0e0; 
+            --text-dark: #333; 
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+            --transition: all 0.3s ease; 
+        } 
+ 
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+        } 
+ 
+        body { 
+            background-color: #f5f7fa; 
+            color: var(--text-dark); 
+            line-height: 1.6; 
+        } 
+ 
+        .dashboard { 
+            display: flex; 
+            min-height: 100vh; 
+        } 
+ 
+        /* Sidebar */ 
+        .sidebar { 
+            width: 250px; 
+            background-color: var(--primary-dark); 
+            color: var(--text-light); 
+            padding: 20px 0; 
+            transition: var(--transition); 
+            position: fixed; 
+            height: 100vh; 
+            z-index: 100; 
+        } 
+ 
+        .sidebar-header { 
+            padding: 0 20px 20px; 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
+        } 
+ 
+        .sidebar-header h2 { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            font-size: 1.3rem; 
+        } 
+ 
+        .sidebar-header h2 i { 
+            color: var(--primary-light); 
+        } 
+ 
+        .sidebar-menu { 
+            padding: 20px 0; 
+        } 
+ 
+        .menu-item { 
+            padding: 12px 20px; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            transition: var(--transition); 
+            border-left: 3px solid transparent; 
+        } 
+ 
+        .menu-item:hover, .menu-item.active { 
+            background-color: rgba(255, 255, 255, 0.1); 
+            border-left: 3px solid var(--primary-light); 
+            color: white; 
+        } 
+ 
+        .menu-item i { 
+            width: 20px; 
+            text-align: center; 
+        } 
+ 
+        /* Main Content */ 
+        .main-content { 
+            flex: 1; 
+            margin-left: 250px; 
+            transition: var(--transition); 
+        } 
+ 
+        /* Top Navigation */ 
+        .top-nav { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 15px 25px; 
+            background-color: white; 
+            box-shadow: var(--shadow); 
+            position: sticky; 
+            top: 0; 
+            z-index: 90; 
+        } 
+ 
+        .search-bar { 
+            display: flex; 
+            align-items: center; 
+            background-color: var(--secondary); 
+            border-radius: 5px; 
+            padding: 8px 15px; 
+            width: 300px; 
+        } 
+ 
+        .search-bar input { 
+            border: none; 
+            background: transparent; 
+            width: 100%; 
+            padding: 5px; 
+            outline: none; 
+        } 
+ 
+        .search-bar i { 
+            color: #777; 
+            margin-right: 10px; 
+        } 
+ 
+        .user-profile { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+        } 
+ 
+        .user-profile img { 
+            width: 35px; 
+            height: 35px; 
+            border-radius: 50%; 
+            object-fit: cover; 
+        } 
+ 
+        /* Content Area */ 
+        .content { 
+            padding: 25px; 
+        } 
+ 
+        .page-title { 
+            margin-bottom: 20px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        } 
+ 
+        .page-title h1 { 
+            font-size: 1.8rem; 
+            color: var(--primary-dark); 
+        } 
+ 
+        .export-buttons { 
+            display: flex; 
+            gap: 10px; 
+        } 
+ 
+        .btn { 
+            padding: 8px 15px; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            transition: var(--transition); 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            font-weight: 500; 
+        } 
+ 
+        .btn-primary { 
+            background-color: var(--primary); 
+            color: white; 
+        } 
+ 
+        .btn-primary:hover { 
+            background-color: var(--primary-light); 
+        } 
+ 
+        .btn-outline { 
+            background-color: transparent; 
+            border: 1px solid var(--primary); 
+            color: var(--primary); 
+        } 
+ 
+        .btn-outline:hover { 
+            background-color: rgba(42, 157, 143, 0.1); 
+        } 
+ 
+        /* Filters */ 
+        .filters { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 15px; 
+            margin-bottom: 25px; 
+            padding: 15px; 
+            background-color: white; 
+            border-radius: 8px; 
+            box-shadow: var(--shadow); 
+        } 
+ 
+        .filter-group { 
+            flex: 1; 
+            min-width: 180px; 
+        } 
+ 
+        .filter-group label { 
+            display: block; 
+            margin-bottom: 5px; 
+            font-size: 0.9rem; 
+            color: #555; 
+            font-weight: 500; 
+        } 
+ 
+        .filter-group select, .filter-group input { 
+            width: 100%; 
+            padding: 8px 12px; 
+            border: 1px solid #ddd; 
+            border-radius: 5px; 
+            background-color: white; 
+            transition: var(--transition); 
+        } 
+ 
+        .filter-group select:focus, .filter-group input:focus { 
+            outline: none; 
+            border-color: var(--primary-light); 
+            box-shadow: 0 0 0 2px rgba(42, 157, 143, 0.2); 
+        } 
+ 
+        /* Summary Cards */ 
+        .summary-cards { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
+            gap: 20px; 
+            margin-bottom: 25px; 
+        } 
+ 
+        .card { 
+            background-color: white; 
+            border-radius: 8px; 
+            padding: 20px; 
+            box-shadow: var(--shadow); 
+            transition: var(--transition); 
+            cursor: pointer; 
+            position: relative; 
+            overflow: hidden; 
+        } 
+ 
+        .card:hover { 
+            transform: translateY(-5px); 
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); 
+        } 
+ 
+        .card::before { 
+            content: ''; 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 5px; 
+            height: 100%; 
+            background-color: var(--primary-light); 
+        } 
+ 
+        .card h3 { 
+            font-size: 0.9rem; 
+            color: #777; 
+            margin-bottom: 10px; 
+        } 
+ 
+        .card .value { 
+            font-size: 1.8rem; 
+            font-weight: 700; 
+            color: var(--primary-dark); 
+            margin-bottom: 5px; 
+        } 
+ 
+        .card .change { 
+            font-size: 0.9rem; 
+            display: flex; 
+            align-items: center; 
+            gap: 5px; 
+        } 
+ 
+        .card .change.positive { 
+            color: #2ecc71; 
+        } 
+ 
+        .card .change.negative { 
+            color: #e74c3c; 
+        } 
+ 
+        /* Charts Container */ 
+        .charts-container { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 20px; 
+            margin-bottom: 25px; 
+        } 
+ 
+        @media (max-width: 1200px) { 
+            .charts-container { 
+                grid-template-columns: 1fr; 
+            } 
+        } 
+ 
+        .chart-card { 
+            background-color: white; 
+            border-radius: 8px; 
+            padding: 20px; 
+            box-shadow: var(--shadow); 
+        } 
+ 
+        .chart-card h3 { 
+            margin-bottom: 15px; 
+            color: var(--primary-dark); 
+            font-size: 1.1rem; 
+        } 
+ 
+        .chart-container { 
+            position: relative; 
+            height: 300px; 
+            width: 100%; 
+        } 
+ 
+        /* Leaderboard */ 
+        .leaderboard { 
+            background-color: white; 
+            border-radius: 8px; 
+            padding: 20px; 
+            box-shadow: var(--shadow); 
+            margin-bottom: 25px; 
+        } 
+ 
+        .leaderboard h3 { 
+            margin-bottom: 15px; 
+            color: var(--primary-dark); 
+            font-size: 1.1rem; 
+        } 
+ 
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+        } 
+ 
+        th, td { 
+            padding: 12px 15px; 
+            text-align: left; 
+            border-bottom: 1px solid #eee; 
+        } 
+ 
+        th { 
+            background-color: #f9f9f9; 
+            font-weight: 600; 
+            color: #555; 
+        } 
+ 
+        tr:hover { 
+            background-color: #f5f5f5; 
+        } 
+ 
+        .badge { 
+            display: inline-block; 
+            padding: 3px 8px; 
+            border-radius: 20px; 
+            font-size: 0.8rem; 
+            font-weight: 500; 
+        } 
+ 
+        .badge-success { 
+            background-color: #e8f5e9; 
+            color: #2e7d32; 
+        } 
+ 
+        .badge-warning { 
+            background-color: #fff8e1; 
+            color: #ff8f00; 
+        } 
+ 
+        /* Tree View */ 
+        .tree-view { 
+            background-color: white; 
+            border-radius: 8px; 
+            padding: 20px; 
+            box-shadow: var(--shadow); 
+        } 
+ 
+        .tree-view h3 { 
+            margin-bottom: 15px; 
+            color: var(--primary-dark); 
+            font-size: 1.1rem; 
+        } 
+ 
+        .tree-search { 
+            margin-bottom: 15px; 
+        } 
+ 
+        .tree { 
+            list-style: none; 
+            padding-left: 0; 
+        } 
+ 
+        .tree-node { 
+            margin-bottom: 5px; 
+        } 
+ 
+        .node-header { 
+            display: flex; 
+            align-items: center; 
+            padding: 8px 10px; 
+            background-color: #f9f9f9; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            transition: var(--transition); 
+        } 
+ 
+        .node-header:hover { 
+            background-color: #f0f0f0; 
+        } 
+ 
+        .node-header i { 
+            margin-right: 10px; 
+            color: var(--primary); 
+            transition: var(--transition); 
+        } 
+ 
+        .node-header.collapsed i.fa-chevron-down { 
+            transform: rotate(-90deg); 
+        } 
+ 
+        .node-title { 
+            flex: 1; 
+            font-weight: 500; 
+        } 
+ 
+        .node-badge { 
+            background-color: var(--primary-light); 
+            color: white; 
+            padding: 2px 8px; 
+            border-radius: 20px; 
+            font-size: 0.8rem; 
+        } 
+ 
+        .node-children { 
+            list-style: none; 
+            padding-left: 30px; 
+            margin-top: 5px; 
+            display: block; 
+        } 
+ 
+        .node-children.collapsed { 
+            display: none; 
+        } 
+ 
+        /* Tabs */ 
+        .tabs { 
+            display: flex; 
+            border-bottom: 1px solid #ddd; 
+            margin-bottom: 20px; 
+        } 
+ 
+        .tab { 
+            padding: 10px 20px; 
+            cursor: pointer; 
+            border-bottom: 3px solid transparent; 
+            transition: var(--transition); 
+            font-weight: 500; 
+            color: #555; 
+        } 
+ 
+        .tab:hover { 
+            color: var(--primary); 
+        } 
+ 
+        .tab.active { 
+            color: var(--primary); 
+            border-bottom: 3px solid var(--primary); 
+        } 
+ 
+        .tab-content { 
+            display: none; 
+        } 
+ 
+        .tab-content.active { 
+            display: block; 
+        } 
+ 
+        /* Responsive */ 
+        @media (max-width: 992px) { 
+            .sidebar { 
+                width: 70px; 
+                overflow: hidden; 
+            } 
+            .sidebar-header h2 span, .menu-item span { 
+                display: none; 
+            } 
+            .sidebar-header h2 { 
+                justify-content: center; 
+            } 
+            .menu-item { 
+                justify-content: center; 
+            } 
+            .main-content { 
+                margin-left: 70px; 
+            } 
+        } 
+ 
+        @media (max-width: 768px) { 
+            .filters { 
+                flex-direction: column; 
+            } 
+            .filter-group { 
+                min-width: 100%; 
+            } 
+            .top-nav { 
+                flex-direction: column; 
+                gap: 15px; 
+                padding: 15px; 
+            } 
+            .search-bar { 
+                width: 100%; 
+            } 
+        } 
+    </style> 
+</head> 
+<body> 
+    <div class="dashboard"> 
+        <!-- Sidebar --> 
+        <div class="sidebar"> 
+            <div class="sidebar-header"> 
+                <h2><i class="fas fa-brain"></i> <span>AI Learning</span></h2> 
+            </div> 
+            <div class="sidebar-menu"> 
+                <div class="menu-item active" data-tab="universal-summary"> 
+                    <i class="fas fa-chart-pie"></i> 
+                    <span>Universal Summary</span> 
+                </div> 
+                <div class="menu-item" data-tab="practice-view"> 
+                    <i class="fas fa-users"></i> 
+                    <span>Practice View</span> 
+                </div> 
+                <div class="menu-item" data-tab="grade-view"> 
+                    <i class="fas fa-graduation-cap"></i> 
+                    <span>Grade View</span> 
+                </div> 
+                <div class="menu-item" data-tab="employee-view"> 
+                    <i class="fas fa-user-tie"></i> 
+                    <span>Employee View</span> 
+                </div> 
+            </div> 
+        </div> 
+ 
+        <!-- Main Content --> 
+        <div class="main-content"> 
+            <!-- Top Navigation --> 
+            <div class="top-nav"> 
+                <div class="search-bar"> 
+                    <i class="fas fa-search"></i> 
+                    <input type="text" placeholder="Search dashboard..."> 
+                </div> 
+                <div class="user-profile"> 
+                    <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User"> 
+                    <span>Admin User</span> 
+                </div> 
+            </div> 
+ 
+            <!-- Content Area --> 
+            <div class="content"> 
+                <!-- Universal Summary Tab --> 
+                <div class="tab-content active" id="universal-summary"> 
+                    <div class="page-title"> 
+                        <h1>AI Course Completion Dashboard</h1> 
+                        <div class="export-buttons"> 
+                            <button class="btn btn-outline"><i class="fas fa-file-csv"></i> Export 
+CSV</button> 
+                            <button class="btn btn-primary"><i class="fas fa-file-excel"></i> Export 
+Excel</button> 
+                        </div> 
+                    </div> 
+                    <!-- ✅ LMS Upload Form -->
+<h3>📥 Upload LMS CSV File</h3>
+<form id="uploadForm" method="POST" enctype="multipart/form-data" action="/upload/">
+  {% csrf_token %}
+  <input type="file" name="csv_file" accept=".csv" required>
+  <button type="submit">Upload</button>
+</form>
+
+<h3>🏆 Top 5 Practices by Completion %</h3>
+<table border="1" id="leaderboard">
+  <thead>
+    <tr><th>Rank</th><th>Practice</th><th>Completion %</th></tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+
+ 
+                    <!-- Filters --> 
+                    <!-- ✅ FILTER SECTION (Connected IDs) -->
+<div class="filters">
+  <div class="filter-group">
+    <label for="course">Course Name</label>
+    <select id="course">
+  <option value="all">All Courses</option>
+  {% for course in courses %}
+    <option value="{{ course.course_id }}">{{ course.title }}</option>
+  {% endfor %}
+</select>
+
+  </div>
+</div>
+ <h3 style="margin-top: 30px;">Employee Headcount Report</h3>
+<table border="1" cellpadding="6" cellspacing="0" style="width: 100%; border-collapse: collapse;">
+  <thead style="background-color: #f2f2f2;">
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Grade</th>
+      <th>Practice</th>
+      <th>Region</th>
+      <th>PM</th>
+      <th>DM</th>
+      <th>BL</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for emp in employees %}
+      <tr>
+        <td>{{ emp.emp_id }}</td>
+        <td>{{ emp.name }}</td>
+        <td>{{ emp.email }}</td>
+        <td>{{ emp.grade }}</td>
+        <td>{{ emp.practice }}</td>
+        <td>{{ emp.region }}</td>
+        <td>{{ emp.project_manager }}</td>
+        <td>{{ emp.delivery_manager }}</td>
+        <td>{{ emp.business_leader }}</td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="9">No data found.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+  <div class="filter-group">
+    <label for="practice">Practice</label>
+   <select id="practice">
+  <option value="all">All Practices</option>
+  {% for practice in practices %}
+    <option value="{{ practice }}">{{ practice }}</option>
+  {% endfor %}
+</select>
+
+  </div>
+
+  <div class="filter-group">
+    <label for="grade">Grade</label>
+    <select id="grade">
+  <option value="all">All Grades</option>
+  {% for grade in grades %}
+    <option value="{{ grade }}">{{ grade }}</option>
+  {% endfor %}
+</select>
+
+  </div>
+
+  <div class="filter-group">
+    <label for="completion">Completion Status</label>
+    <select id="completion">
+      <option value="all">All</option>
+      <option value="completed">Completed</option>
+      <option value="not-completed">Not Completed</option>
+    </select>
+  </div>
+
+  <div class="filter-group">
+    <label for="delivery_manager">Delivery Manager</label>
+    <select id="delivery_manager">
+      <option value="all">All Managers</option>
+      {% for dm in delivery_managers %}
+        <option value="{{ dm }}">{{ dm }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+
+ <div class="filter-group">
+    <label for="project_manager">Project Manager</label>
+    <select id="project_manager">
+      <option value="all">All PMs</option>
+      {% for pm in project_managers %}
+        <option value="{{ pm }}">{{ pm }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+<div class="filter-group">
+    <label for="business_leader">Business Leader</label>
+    <select id="business_leader">
+      <option value="all">All Leaders</option>
+      {% for bl in business_leaders %}
+        <option value="{{ bl }}">{{ bl }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+   <div class="filter-group">
+    <label for="search">Search employees...</label>
+    <input type="text" id="search" placeholder="Name / Emp ID / Email" />
+  </div>
+
+</div>
+
+ <div class="filter-group">
+    <label for="region">Region</label>
+    <select id="region">
+      <option value="all">All Regions</option>
+      {% for region in regions %}
+        <option value="{{ region }}">{{ region }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="filter-group">
+    <button onclick="loadData()">Apply Filters</button>
+  </div>
+</div>
+
+                    <!-- Summary Cards --> 
+                    <div class="summary-cards"> 
+                        <div class="card" id="total-enrolled"> 
+                            <h3>Total Enrolled</h3> 
+                            <div class="value">1,245</div> 
+                            <div class="change positive"> 
+                                <i class="fas fa-arrow-up"></i> 
+                                <span>12% from last month</span> 
+                            </div> 
+                        </div> 
+                        <div class="card" id="completed"> 
+                            <h3>Completed</h3> 
+                            <div class="value">876</div> 
+                            <div class="change positive"> 
+                                <i class="fas fa-arrow-up"></i> 
+                                <span>8% from last month</span> 
+                            </div> 
+                        </div> 
+                        <div class="card" id="not-completed"> 
+                            <h3>Not Completed</h3> 
+                            <div class="value">369</div> 
+                            <div class="change negative"> 
+                                <i class="fas fa-arrow-down"></i> 
+                                <span>30% of total</span> 
+                            </div> 
+                        </div> 
+                        <div class="card" id="completion-rate"> 
+                            <h3>Completion Rate</h3> 
+                            <div class="value">70.4%</div> 
+                            <div class="change positive"> 
+                                <i class="fas fa-arrow-up"></i> 
+                                <span>5% from last month</span> 
+                            </div> 
+                        </div> 
+                    </div> 
+ 
+                    <!-- Charts --> 
+                    <div class="charts-container"> 
+                        <div class="chart-card"> 
+                            <h3>Completion % by Practice</h3> 
+                            <div class="chart-container"> 
+                                <canvas id="practiceChart"></canvas> 
+                            </div> 
+                        </div> 
+                        <div class="chart-card"> 
+                            <h3>Completion % by Grade</h3> 
+                            <div class="chart-container"> 
+                                <canvas id="gradeChart"></canvas> 
+                            </div> 
+                        </div> 
+                    </div> 
+ 
+                    <!-- Leaderboard --> 
+                    <div class="leaderboard"> 
+                        <h3>Top 5 Practices by Completion Rate</h3> 
+                        <table> 
+                            <thead> 
+                                <tr> 
+                                    <th>Practice</th> 
+                                    <th>Enrolled</th> 
+                                    <th>Completed</th> 
+                                    <th>Completion Rate</th> 
+                                    <th>Trend</th> 
+                                </tr> 
+                            </thead> 
+                            <tbody> 
+                                <tr> 
+                                    <td>Data Science</td> 
+                                    <td>320</td> 
+                                    <td>256</td> 
+                                    <td><span class="badge badge-success">80%</span></td> 
+                                    <td><i class="fas fa-arrow-up text-success"></i></td> 
+                                </tr> 
+                                <tr> 
+                                    <td>Cloud</td> 
+                                    <td>280</td> 
+                                    <td>210</td> 
+                                    <td><span class="badge badge-success">75%</span></td> 
+                                    <td><i class="fas fa-arrow-up text-success"></i></td> 
+                                </tr> 
+                                <tr> 
+                                    <td>Software Engineering</td> 
+                                    <td>350</td> 
+                                    <td>245</td> 
+                                    <td><span class="badge badge-success">70%</span></td> 
+                                    <td><i class="fas fa-arrow-up text-success"></i></td> 
+                                </tr> 
+                                <tr> 
+                                    <td>Cybersecurity</td> 
+                                    <td>195</td> 
+                                    <td>117</td> 
+                                    <td><span class="badge badge-warning">60%</span></td> 
+                                    <td><i class="fas fa-arrow-down text-danger"></i></td> 
+                                </tr> 
+                                <tr> 
+                                    <td>UX Design</td> 
+                                    <td>100</td> 
+                                    <td>50</td> 
+                                    <td><span class="badge badge-warning">50%</span></td> 
+                                    <td><i class="fas fa-arrow-down text-danger"></i></td> 
+                                </tr> 
+                            </tbody> 
+                        </table> 
+                    </div> 
+ 
+                    <!-- Completion Trend --> 
+                    <div class="chart-card"> 
+                        <h3>Completion Trend over Time</h3> 
+                        <div class="chart-container"> 
+                            <canvas id="trendChart"></canvas> 
+                        </div> 
+                    </div> 
+ 
+                    <!-- Tree View --> 
+                    <div class="tree-view"> 
+                        <h3>Organization Hierarchy</h3> 
+                        <div class="tree-search"> 
+                            <div class="search-bar"> 
+                                <i class="fas fa-search"></i> 
+                                <input type="text" id="tree-search" placeholder="Search employees..."> 
+                            </div> 
+                        </div> 
+                        <ul class="tree" id="org-tree"> 
+                            <!-- Tree will be populated by JavaScript --> 
+                        </ul> 
+                    </div> 
+                </div> 
+ 
+                <!-- Practice View Tab --> 
+                <div class="tab-content" id="practice-view"> 
+                    <div class="page-title"> 
+                        <h1>Practice View Analytics</h1> 
+                        <div class="export-buttons"> 
+                            <button class="btn btn-outline"><i class="fas fa-file-csv"></i> Export 
+CSV</button> 
+                            <button class="btn btn-primary"><i class="fas fa-file-excel"></i> Export 
+Excel</button> 
+                        </div> 
+                    </div> 
+                     
+                    <div class="filters"> 
+                        <!-- Practice-specific filters would go here --> 
+                        <div class="filter-group"> 
+                            <label for="practice-select">Select Practice</label> 
+                            <select id="practice-select"> 
+                                <option value="all">All Practices</option> 
+                                <option value="data-science">Data Science</option> 
+                                <option value="software-eng">Software Engineering</option> 
+                                <option value="cloud">Cloud</option> 
+                                <option value="cybersecurity">Cybersecurity</option> 
+                            </select> 
+                        </div> 
+                    </div> 
+                     
+                    <div class="summary-cards"> 
+                        <div class="card"> 
+                            <h3>Practice Completion Rate</h3> 
+                            <div class="value">72%</div> 
+                            <div class="change positive"> 
+                                <i class="fas fa-arrow-up"></i> 
+                                <span>5% from last quarter</span> 
+                            </div> 
+                        </div> 
+                        <div class="card"> 
+                            <h3>Employees Enrolled</h3> 
+                            <div class="value">450</div> 
+                            <div class="change positive"> 
+                                <i class="fas fa-arrow-up"></i> 
+                                <span>15% from last quarter</span> 
+                            </div> 
+                        </div> 
+                        <div class="card"> 
+                            <h3>Avg. Completion Time</h3> 
+                            <div class="value">14 days</div> 
+                            <div class="change negative"> 
+                                <i class="fas fa-arrow-down"></i> 
+                                <span>2 days longer</span> 
+                            </div> 
+                        </div> 
+                    </div> 
+                     
+                    <div class="charts-container"> 
+                        <div class="chart-card"> 
+                            <h3>Completion by Course</h3> 
+                            <div class="chart-container"> 
+                                <canvas id="practiceCourseChart"></canvas> 
+                            </div> 
+                        </div> 
+                        <div class="chart-card"> 
+                            <h3>Completion by Grade Level</h3> 
+                            <div class="chart-container"> 
+                                <canvas id="practiceGradeChart"></canvas> 
+                            </div> 
+                        </div> 
+                    </div> 
+                     
+                    <div class="leaderboard"> 
+                        <h3>Employee Completion Breakdown</h3> 
+                        <table> 
+                            <thead> 
+                                <tr> 
+                                    <th>Employee</th> 
+                                    <th>Grade</th> 
+                                    <th>Courses Enrolled</th> 
+                                    <th>Courses Completed</th> 
+                                    <th>Completion Rate</th> 
+                                    <th>Status</th> 
+                                </tr> 
+                            </thead> 
+                            <tbody> 
+                                <tr> 
+                                    <td>John Smith</td> 
+                                    <td>Senior</td> 
+                                    <td>5</td> 
+                                    <td>4</td> 
+                                    <td>80%</td> 
+                                    <td><span class="badge badge-success">On Track</span></td> 
+                                </tr> 
+                                <tr> 
+                                    <td>Sarah Johnson</td> 
+                                    <td>Lead</td> 
+                                    <td>3</td> 
+                                    <td>3</td> 
+                                    <td>100%</td> 
+                                    <td><span class="badge badge-success">Completed</span></td> 
+                                </tr> 
+                                <tr> 
+                                    <td>Mike Williams</td> 
+                                    <td>Associate</td> 
+                                    <td>4</td> 
+                                    <td>1</td> 
+                                    <td>25%</td> 
+                                    <td><span class="badge badge-warning">Behind</span></td> 
+                                </tr> 
+                                <tr> 
+                                    <td>Emily Brown</td> 
+                                    <td>Principal</td> 
+                                    <td>2</td> 
+                                    <td>2</td> 
+                                    <td>100%</td> 
+                                    <td><span class="badge badge-success">Completed</span></td> 
+                                </tr> 
+                            </tbody> 
+                        </table> 
+                    </div> 
+                </div> 
+ 
+                <!-- Grade View Tab --> 
+                <div class="tab-content" id="grade-view"> 
+                    <div class="page-title"> 
+                        <h1>Grade View Analytics</h1> 
+                        <div class="export-buttons"> 
+                            <button class="btn btn-outline"><i class="fas fa-file-csv"></i> Export 
+CSV</button> 
+                            <button class="btn btn-primary"><i class="fas fa-file-excel"></i> Export 
+Excel</button> 
+                        </div> 
+                    </div> 
+                     
+                    <div class="filters"> 
+                        <div class="filter-group"> 
+                            <label for="grade-select">Select Grade</label> 
+                            <select id="grade-select"> 
+                                <option value="all">All Grades</option> 
+                                <option value="associate">Associate</option> 
+                                <option value="senior">Senior</option> 
+                                <option value="lead">Lead</option> 
+                                <option value="principal">Principal</option> 
+                            </select> 
+                        </div> 
+                    </div> 
+                     
+                    <div class="summary-cards"> 
+                        <div class="card"> 
+                            <h3>Grade Completion Rate</h3> 
+                            <div class="value">68%</div> 
+                            <div class="change positive"> 
+                                <i class="fas fa-arrow-up"></i> 
+                                <span>7% from last quarter</span> 
+                            </div> 
+                        </div> 
+                        <div class="card"> 
+                            <h3>Employees in Grade</h3> 
+                            <div class="value">320</div> 
+                            <div class="change positive"> 
+                                <i class="fas fa-arrow-up"></i> 
+                                <span>8% from last quarter</span> 
+                            </div> 
+                        </div> 
+                        <div class="card"> 
+                            <h3>Avg. Courses per Employee</h3> 
+                            <div class="value">2.8</div> 
+                            <div class="change negative"> 
+                                <i class="fas fa-arrow-down"></i> 
+                                <span>0.3 less than target</span> 
+                            </div> 
+                        </div> 
+                    </div> 
+                     
+                    <div class="charts-container"> 
+                        <div class="chart-card"> 
+                            <h3>Completion by Practice</h3> 
+                            <div class="chart-container"> 
+                                <canvas id="gradePracticeChart"></canvas> 
+                            </div> 
+                        </div> 
+                        <div class="chart-card"> 
+                            <h3>Completion Trend by Grade</h3> 
+                            <div class="chart-container"> 
+                                <canvas id="gradeTrendChart"></canvas> 
+                            </div> 
+                        </div> 
+                    </div> 
+                     
+                    <div class="leaderboard"> 
+                        <h3>Grade Comparison</h3> 
+                        <table> 
+                            <thead> 
+                                <tr> 
+                                    <th>Grade</th> 
+                                    <th>Employees</th> 
+                                    <th>Courses Enrolled</th> 
+                                    <th>Courses Completed</th> 
+                                    <th>Completion Rate</th> 
+                                    <th>Trend</th> 
+                                </tr> 
+                            </thead> 
+                            <tbody> 
+                                <tr> 
+                                    <td>Principal</td> 
+                                    <td>45</td> 
+                                    <td>135</td> 
+                                    <td>121</td> 
+                                    <td>90%</td> 
+                                    <td><i class="fas fa-arrow-up text-success"></i></td> 
+                                </tr> 
+                                <tr> 
+                                    <td>Lead</td> 
+                                    <td>120</td> 
+                                    <td>360</td> 
+                                    <td>270</td> 
+                                    <td>75%</td> 
+                                    <td><i class="fas fa-arrow-up text-success"></i></td> 
+                                </tr> 
+                                <tr> 
+                                    <td>Senior</td> 
+                                    <td>200</td> 
+                                    <td>600</td> 
+                                    <td>390</td> 
+                                    <td>65%</td> 
+                                    <td><i class="fas fa-arrow-up text-success"></i></td> 
+                                </tr> 
+                                <tr> 
+                                    <td>Associate</td> 
+                                    <td>300</td> 
+                                    <td>900</td> 
+                                    <td>510</td> 
+                                    <td>57%</td> 
+                                    <td><i class="fas fa-arrow-down text-danger"></i></td> 
+                                </tr> 
+                            </tbody> 
+                        </table> 
+                    </div> 
+                </div> 
+ 
+                <!-- Employee View Tab --> 
+                <div class="tab-content" id="employee-view"> 
+                    <div class="page-title"> 
+                        <h1>Employee Completion Data</h1> 
+                        <div class="export-buttons"> 
+                            <button class="btn btn-outline"><i class="fas fa-file-csv"></i> Export 
+CSV</button> 
+                            <button class="btn btn-primary"><i class="fas fa-file-excel"></i> Export 
+Excel</button> 
+                        </div> 
+                    </div> 
+                     
+                    <div class="filters"> 
+                        <div class="filter-group"> 
+                            <label for="employee-name">Employee Name</label> 
+                            <input type="text" id="employee-name" placeholder="Search by name..."> 
+                        </div> 
+                        <div class="filter-group"> 
+                            <label for="employee-id">Employee ID</label> 
+                            <input type="text" id="employee-id" placeholder="Search by ID..."> 
+                        </div> 
+                        <div class="filter-group"> 
+                            <label for="employee-status">Completion Status</label> 
+                            <select id="employee-status"> 
+                                <option value="all">All</option> 
+                                <option value="completed">Completed</option> 
+                                <option value="in-progress">In Progress</option> 
+                                <option value="not-started">Not Started</option> 
+                            </select> 
+                        </div> 
+                    </div> 
+                     
+                    <div class="leaderboard"> 
+                        <table> 
+                            <thead> 
+                                <tr> 
+                                    <th>Employee ID</th> 
+                                    <th>Name</th> 
+                                    <th>Grade</th> 
+                                    <th>Practice</th> 
+                                    <th>Courses Enrolled</th> 
+                                    <th>Courses Completed</th> 
+                                    <th>Completion %</th> 
+                                    <th>Last Activity</th> 
+                                    <th>Actions</th> 
+                                </tr> 
+                            </thead> 
+                            <tbody> 
+                                <tr> 
+                                    <td>EMP1001</td> 
+                                    <td>John Smith</td> 
+                                    <td>Senior</td> 
+                                    <td>Data Science</td> 
+                                    <td>5</td> 
+                                    <td>4</td> 
+                                    <td>80%</td> 
+                                    <td>2 days ago</td> 
+                                    <td> 
+                                        <button class="btn btn-outline btn-sm"><i class="fas fa-eye"></i></button> 
+                                        <button class="btn btn-outline btn-sm"><i class="fas fa-edit"></i></button> 
+                                    </td> 
+                                </tr> 
+                                <tr> 
+                                    <td>EMP1002</td> 
+                                    <td>Sarah Johnson</td> 
+                                    <td>Lead</td> 
+                                    <td>Cloud</td> 
+                                    <td>3</td> 
+                                    <td>3</td> 
+                                    <td>100%</td> 
+                                    <td>1 week ago</td> 
+                                    <td> 
+                                        <button class="btn btn-outline btn-sm"><i class="fas fa-eye"></i></button> 
+                                        <button class="btn btn-outline btn-sm"><i class="fas fa-edit"></i></button> 
+                                    </td> 
+                                </tr> 
+                                <tr> 
+                                    <td>EMP1003</td> 
+                                    <td>Mike Williams</td> 
+                                    <td>Associate</td> 
+                                    <td>Software Engineering</td> 
+                                    <td>4</td> 
+                                    <td>1</td> 
+                                    <td>25%</td> 
+                                    <td>3 weeks ago</td> 
+                                    <td> 
+                                        <button class="btn btn-outline btn-sm"><i class="fas fa-eye"></i></button> 
+                                        <button class="btn btn-outline btn-sm"><i class="fas fa-edit"></i></button> 
+                                    </td> 
+                                </tr> 
+                                <tr> 
+                                    <td>EMP1004</td> 
+                                    <td>Emily Brown</td> 
+                                    <td>Principal</td> 
+                                    <td>Cybersecurity</td> 
+                                    <td>2</td> 
+                                    <td>2</td> 
+                                    <td>100%</td> 
+                                    <td>5 days ago</td> 
+                                    <td> 
+                                        <button class="btn btn-outline btn-sm"><i class="fas fa-eye"></i></button> 
+                                        <button class="btn btn-outline btn-sm"><i class="fas fa-edit"></i></button> 
+                                    </td> 
+                                </tr> 
+                                <tr> 
+                                    <td>EMP1005</td> 
+                                    <td>David Lee</td> 
+                                    <td>Senior</td> 
+                                    <td>Data Science</td> 
+                                    <td>3</td> 
+                                    <td>2</td> 
+                                    <td>67%</td> 
+                                    <td>1 day ago</td> 
+                                    <td> 
+                                        <button class="btn btn-outline btn-sm"><i class="fas fa-eye"></i></button> 
+                                        <button class="btn btn-outline btn-sm"><i class="fas fa-edit"></i></button> 
+                                    </td> 
+                                </tr> 
+                            </tbody> 
+                        </table> 
+                    </div> 
+                </div> 
+            </div> 
+        </div> 
+    </div> 
+ 
+    <script> 
+        // Tab Navigation 
+        document.querySelectorAll('.menu-item').forEach(item => { 
+            item.addEventListener('click', function() { 
+                // Remove active class from all menu items and tabs 
+                document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active')); 
+                document.querySelectorAll('.tab-content').forEach(tab => 
+tab.classList.remove('active')); 
+                 
+                // Add active class to clicked menu item and corresponding tab 
+                this.classList.add('active'); 
+                const tabId = this.getAttribute('data-tab'); 
+                document.getElementById(tabId).classList.add('active'); 
+            }); 
+        }); 
+ 
+        // Tree View 
+        const employees = [ 
+            { id: 1, name: "Robert Taylor", role: "Business Leader", practice: "All", completion: "85%", 
+children: [ 
+                { id: 2, name: "John Doe", role: "Delivery Leader", practice: "Data Science", completion: 
+"80%", children: [ 
+                    { id: 3, name: "Sarah Williams", role: "Delivery Manager", practice: "Data Science", 
+completion: "78%", children: [ 
+                        { id: 4, name: "Mike Johnson", role: "Project Manager", practice: "Data Science", 
+completion: "75%", children: [ 
+                            { id: 5, name: "Emily Davis", role: "Employee", practice: "Data Science", 
+completion: "100%", children: [] }, 
+                            { id: 6, name: "David Brown", role: "Employee", practice: "Data Science", 
+completion: "60%", children: [] } 
+                        ]} 
+                    ]} 
+                ]}, 
+                { id: 7, name: "Jane Smith", role: "Delivery Leader", practice: "Cloud", completion: "90%", 
+children: [ 
+                    { id: 8, name: "Mark Wilson", role: "Delivery Manager", practice: "Cloud", completion: 
+"88%", children: [ 
+                        { id: 9, name: "Lisa Miller", role: "Project Manager", practice: "Cloud", completion: 
+"85%", children: [ 
+                            { id: 10, name: "James Wilson", role: "Employee", practice: "Cloud", completion: 
+"80%", children: [] }, 
+                            { id: 11, name: "Anna Taylor", role: "Employee", practice: "Cloud", completion: 
+"90%", children: [] } 
+                        ]} 
+                    ]} 
+                ]} 
+            ]} 
+        ]; 
+ 
+        function renderTree(data, parentElement, level = 0) { 
+            data.forEach(item => { 
+                const li = document.createElement('li'); 
+                li.className = 'tree-node'; 
+                 
+                const header = document.createElement('div'); 
+                header.className = 'node-header'; 
+                if (item.children && item.children.length > 0) { 
+                    header.innerHTML = ` 
+                        <i class="fas fa-chevron-down"></i> 
+                        <span class="node-title">${item.name} (${item.role})</span> 
+                        <span class="node-badge">${item.completion}</span> 
+                    `; 
+                    header.addEventListener('click', function() { 
+                        this.classList.toggle('collapsed'); 
+                        const childrenContainer = this.nextElementSibling; 
+                        childrenContainer.classList.toggle('collapsed'); 
+                    }); 
+                } else { 
+                    header.innerHTML = ` 
+                        <i class="fas fa-user"></i> 
+                        <span class="node-title">${item.name} (${item.role})</span> 
+                        <span class="node-badge">${item.completion}</span> 
+                    `; 
+                } 
+                 
+                li.appendChild(header); 
+                 
+                if (item.children && item.children.length > 0) { 
+                    const childrenContainer = document.createElement('ul'); 
+                    childrenContainer.className = 'node-children'; 
+                    renderTree(item.children, childrenContainer, level + 1); 
+                    li.appendChild(childrenContainer); 
+                } 
+                 
+                parentElement.appendChild(li); 
+            }); 
+        } 
+ 
+        document.addEventListener('DOMContentLoaded', function() { 
+            const treeContainer = document.getElementById('org-tree'); 
+            renderTree(employees, treeContainer); 
+             
+            // Tree search functionality 
+            const treeSearch = document.getElementById('tree-search'); 
+            treeSearch.addEventListener('input', function() { 
+                const searchTerm = this.value.toLowerCase(); 
+                const nodes = document.querySelectorAll('.tree-node'); 
+                 
+                nodes.forEach(node => { 
+                    const text = node.querySelector('.node-title').textContent.toLowerCase(); 
+                    if (text.includes(searchTerm)) { 
+                        node.style.display = 'block'; 
+                         
+                        // Expand parent nodes 
+                        let parent = node.parentElement; 
+                        while (parent && parent.classList.contains('node-children')) { 
+                            const header = parent.previousElementSibling; 
+                            if (header.classList.contains('node-header')) { 
+                                header.classList.remove('collapsed'); 
+                                parent.classList.remove('collapsed'); 
+                            } 
+                            parent = parent.parentElement; 
+                        } 
+                    } else { 
+                        node.style.display = 'none'; 
+                    } 
+                }); 
+            }); 
+        }); 
+ 
+        // Chart Initialization 
+        document.addEventListener('DOMContentLoaded', function() { 
+            // Practice Chart 
+            const practiceCtx = document.getElementById('practiceChart').getContext('2d'); 
+            const practiceChart = new Chart(practiceCtx, { 
+                type: 'bar', 
+                data: { 
+                    labels: ['Data Science', 'Software Eng', 'Cloud', 'Cybersecurity', 'UX Design'], 
+                    datasets: [{ 
+                        label: 'Completion %', 
+                        data: [80, 70, 75, 60, 50], 
+                        backgroundColor: [ 
+                            '#2d8a4a', 
+                            '#3aa35a', 
+                            '#47bc6a', 
+                            '#54d57a', 
+                            '#61ee8a' 
+                        ], 
+                        borderColor: [ 
+                            '#1a5c2e', 
+                            '#1a5c2e', 
+                            '#1a5c2e', 
+                            '#1a5c2e', 
+                            '#1a5c2e' 
+                        ], 
+                        borderWidth: 1 
+                    }] 
+                }, 
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    scales: { 
+                        y: { 
+                            beginAtZero: true, 
+                            max: 100, 
+                            ticks: { 
+                                callback: function(value) { 
+                                    return value + '%'; 
+                                } 
+                            } 
+                        } 
+                    }, 
+                    plugins: { 
+                        tooltip: { 
+                            callbacks: { 
+                                label: function(context) { 
+                                    return context.parsed.y + '%'; 
+                                } 
+                            } 
+                        } 
+                    } 
+                } 
+            }); 
+ 
+            // Grade Chart 
+            const gradeCtx = document.getElementById('gradeChart').getContext('2d'); 
+            const gradeChart = new Chart(gradeCtx, { 
+                type: 'pie', 
+                data: { 
+                    labels: ['Associate', 'Senior', 'Lead', 'Principal'], 
+                    datasets: [{ 
+                        data: [57, 65, 75, 90], 
+                        backgroundColor: [ 
+                            '#0a2e1a', 
+                            '#1a5c2e', 
+                            '#2d8a4a', 
+                            '#3aa35a' 
+                        ], 
+                        borderColor: '#fff', 
+                        borderWidth: 2 
+                    }] 
+                }, 
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    plugins: { 
+                        legend: { 
+                            position: 'right', 
+                        }, 
+                        tooltip: { 
+                            callbacks: { 
+                                label: function(context) { 
+                                    return context.label + ': ' + context.raw + '%'; 
+                                } 
+                            } 
+                        } 
+                    } 
+                } 
+            }); 
+ 
+            // Trend Chart 
+            const trendCtx = document.getElementById('trendChart').getContext('2d'); 
+            const trendChart = new Chart(trendCtx, { 
+                type: 'line', 
+                data: { 
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], 
+                    datasets: [{ 
+                        label: 'Completion Rate', 
+                        data: [45, 48, 52, 55, 58, 62, 65, 67, 68, 70, 72, 75], 
+                        borderColor: '#2d8a4a', 
+                        backgroundColor: 'rgba(45, 138, 74, 0.1)', 
+                        fill: true, 
+                        tension: 0.3 
+                    }] 
+                }, 
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    scales: { 
+                        y: { 
+                            beginAtZero: true, 
+                            max: 100, 
+                            ticks: { 
+                                callback: function(value) { 
+                                    return value + '%'; 
+                                } 
+                            } 
+                        } 
+                    }, 
+                    plugins: { 
+                        tooltip: { 
+                            callbacks: { 
+                                label: function(context) { 
+                                    return context.parsed.y + '%'; 
+                                } 
+                            } 
+                        } 
+                    } 
+                } 
+            }); 
+ 
+            // Practice View Charts 
+            const practiceCourseCtx = 
+document.getElementById('practiceCourseChart').getContext('2d'); 
+            const practiceCourseChart = new Chart(practiceCourseCtx, { 
+                type: 'bar', 
+                data: { 
+                    labels: ['AI Fundamentals', 'ML Basics', 'Deep Learning', 'NLP'], 
+                    datasets: [{ 
+                        label: 'Completion %', 
+                        data: [85, 78, 65, 72], 
+                        backgroundColor: [ 
+                            '#0a2e1a', 
+                            '#1a5c2e', 
+                            '#2d8a4a', 
+                            '#3aa35a' 
+                        ], 
+                        borderColor: '#fff', 
+                        borderWidth: 1 
+                    }] 
+                }, 
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    scales: { 
+                        y: { 
+                            beginAtZero: true, 
+                            max: 100, 
+                            ticks: { 
+                                callback: function(value) { 
+                                    return value + '%'; 
+                                } 
+                            } 
+                        } 
+                    }, 
+                    plugins: { 
+                        tooltip: { 
+                            callbacks: { 
+                                label: function(context) { 
+                                    return context.parsed.y + '%'; 
+                                } 
+                            } 
+                        } 
+                    } 
+                } 
+            }); 
+ 
+            const practiceGradeCtx = 
+document.getElementById('practiceGradeChart').getContext('2d'); 
+            const practiceGradeChart = new Chart(practiceGradeCtx, { 
+                type: 'doughnut', 
+                data: { 
+                    labels: ['Associate', 'Senior', 'Lead', 'Principal'], 
+                    datasets: [{ 
+                        data: [40, 65, 80, 90], 
+                        backgroundColor: [ 
+                            '#0a2e1a', 
+                            '#1a5c2e', 
+                            '#2d8a4a', 
+                            '#3aa35a' 
+                        ], 
+                        borderColor: '#fff', 
+                        borderWidth: 2 
+                    }] 
+                }, 
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    plugins: { 
+                        legend: { 
+                            position: 'right', 
+                        }, 
+                        tooltip: { 
+                            callbacks: { 
+                                label: function(context) { 
+                                    return context.label + ': ' + context.raw + '%'; 
+                                } 
+                            } 
+                        } 
+                    } 
+                } 
+            }); 
+ 
+            // Grade View Charts 
+            const gradePracticeCtx = 
+document.getElementById('gradePracticeChart').getContext('2d'); 
+            const gradePracticeChart = new Chart(gradePracticeCtx, { 
+                type: 'bar', 
+                data: { 
+                    labels: ['Data Science', 'Software Eng', 'Cloud', 'Cybersecurity'], 
+                    datasets: [ 
+                        { 
+                            label: 'Associate', 
+                            data: [45, 40, 50, 55], 
+                            backgroundColor: '#0a2e1a' 
+                        }, 
+                        { 
+                            label: 'Senior', 
+                            data: [65, 60, 70, 75], 
+                            backgroundColor: '#1a5c2e' 
+                        }, 
+                        { 
+                            label: 'Lead', 
+                            data: [80, 75, 85, 90], 
+                            backgroundColor: '#2d8a4a' 
+                        }, 
+                        { 
+                            label: 'Principal', 
+                            data: [90, 85, 95, 100], 
+                            backgroundColor: '#3aa35a' 
+                        } 
+                    ] 
+                }, 
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    scales: { 
+                        y: { 
+                            beginAtZero: true, 
+                            max: 100, 
+                            ticks: { 
+                                callback: function(value) { 
+                                    return value + '%'; 
+                                } 
+                            } 
+                        } 
+                    }, 
+                    plugins: { 
+                        tooltip: { 
+                            callbacks: { 
+                                label: function(context) { 
+                                    return context.dataset.label + ': ' + context.parsed.y + '%'; 
+                                } 
+                            } 
+                        } 
+                    } 
+                } 
+            }); 
+ 
+            const gradeTrendCtx = document.getElementById('gradeTrendChart').getContext('2d'); 
+            const gradeTrendChart = new Chart(gradeTrendCtx, { 
+                type: 'line', 
+                data: { 
+                    labels: ['Q1', 'Q2', 'Q3', 'Q4'], 
+                    datasets: [ 
+                        { 
+                            label: 'Associate', 
+                            data: [35, 40, 45, 50], 
+                            borderColor: '#0a2e1a', 
+                            backgroundColor: 'rgba(10, 46, 26, 0.1)', 
+                            tension: 0.3 
+                        }, 
+                        { 
+                            label: 'Senior', 
+                            data: [50, 55, 60, 65], 
+                            borderColor: '#1a5c2e', 
+                            backgroundColor: 'rgba(26, 92, 46, 0.1)', 
+                            tension: 0.3 
+                        }, 
+                        { 
+                            label: 'Lead', 
+                            data: [65, 70, 75, 80], 
+                            borderColor: '#2d8a4a', 
+                            backgroundColor: 'rgba(45, 138, 74, 0.1)', 
+                            tension: 0.3 
+                        }, 
+                        { 
+                            label: 'Principal', 
+                            data: [80, 85, 90, 95], 
+                            borderColor: '#3aa35a', 
+                            backgroundColor: 'rgba(58, 163, 90, 0.1)', 
+                            tension: 0.3 
+                        } 
+                    ] 
+                }, 
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    scales: { 
+                        y: { 
+                            beginAtZero: true, 
+                            max: 100, 
+                            ticks: { 
+                                callback: function(value) { 
+                                    return value + '%'; 
+                                } 
+                            } 
+                        } 
+                    }, 
+                    plugins: { 
+                        tooltip: { 
+                            callbacks: { 
+                                label: function(context) { 
+                                    return context.dataset.label + ': ' + context.parsed.y + '%'; 
+                                } 
+                            } 
+                        } 
+                    } 
+                } 
+            }); 
+        }); 
+ 
+        // Filter functionality 
+        document.querySelectorAll('.filters select').forEach(select => { 
+            select.addEventListener('change', function() { 
+                // In a real application, this would update the dashboard data 
+                console.log(`Filter changed: ${this.id} = ${this.value}`); 
+                 
+                // Simulate data loading 
+                document.querySelectorAll('.card .value').forEach(card => { 
+                    if (Math.random() > 0.5) { 
+                        const current = parseInt(card.textContent.replace(/,/g, '')); 
+                        const change = Math.floor(Math.random() * 50) - 10; 
+                        const newValue = Math.max(0, current + change); 
+                        card.textContent = newValue.toLocaleString(); 
+                         
+                        const changeElement = card.nextElementSibling.nextElementSibling; 
+                        if (change >= 0) { 
+                            changeElement.className = 'change positive'; 
+                            changeElement.innerHTML = `<i class="fas fa-arrow-up"></i> 
+<span>${Math.abs(change)}% from last filter</span>`; 
+                        } else { 
+                            changeElement.className = 'change negative'; 
+                            changeElement.innerHTML = `<i class="fas fa-arrow-down"></i> 
+<span>${Math.abs(change)}% from last filter</span>`; 
+                        } 
+                    } 
+                }); 
+            }); 
+        }); 
+ 
+        // Card click functionality 
+        document.querySelectorAll('.card').forEach(card => { 
+            card.addEventListener('click', function() { 
+                const cardId = this.id; 
+                alert(`Drilling down into ${cardId.replace('-', ' ')} data`); 
+            }); 
+        }); 
+ 
+        // Export buttons 
+        document.querySelectorAll('.export-buttons button').forEach(button => { 
+            button.addEventListener('click', function() { 
+                const format = this.textContent.includes('CSV') ? 'CSV' : 'Excel'; 
+                alert(`Exporting data to ${format} format`); 
+            }); 
+        }); 
+ 
+        // Employee search 
+        document.getElementById('employee-search').addEventListener('input', function() { 
+            console.log(`Searching for employee: ${this.value}`); 
+        }); 
+
+
+
+
+
+
+
+        function loadData() {
+  let course = document.getElementById('course').value;
+  let grade = document.getElementById('grade').value;
+  let practice = document.getElementById('practice').value;
+  let region = document.getElementById('region').value;
+  let pm = document.getElementById('project_manager').value;
+  let dm = document.getElementById('delivery_manager').value;
+  let bl = document.getElementById('business_leader').value;
+  let completion = document.getElementById('completion').value;
+  let search = document.getElementById('search').value;
+
+  let url = `/api/table/?grade=${grade}&course=${course}&practice=${practice}&region=${region}&project_manager=${pm}&delivery_manager=${dm}&business_leader=${bl}&search=${search}&completion=${completion}`;
+
+  fetch(url)
+    .then(res => res.json())
+    .then(data => {
+      let tbody = document.querySelector('#empTable tbody');
+      tbody.innerHTML = "";
+      data.rows.forEach(row => {
+        tbody.innerHTML += `<tr><td>${row.emp_id}</td><td>${row.name}</td><td>${row.email}</td><td>${row.course}</td><td>${row.progress}%</td><td>${row.completed}</td></tr>`;
+      });
+    });
+}
+fetch('/api/leaderboard/')
+.then(res => res.json())
+.then(data => {
+    let tbody = document.querySelector('#leaderboard tbody');
+    tbody.innerHTML = "";
+    data.leaderboard.forEach((row, index) => {
+        tbody.innerHTML += `<tr><td>${index + 1}</td><td>${row.practice}</td><td>${row.completion}%</td></tr>`;
+    });
+});
+
+    </script> 
+</body> 
+</html> 
