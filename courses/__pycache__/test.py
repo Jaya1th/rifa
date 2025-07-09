@@ -1,6 +1,3 @@
-paste here
-hi
-hi
 Exception in thread django-main-thread:
 Traceback (most recent call last):
   File "C:\Program Files\Python310\lib\threading.py", line 1009, in _bootstrap_inner
@@ -49,6 +46,6 @@ Traceback (most recent call last):
   File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
   File "<frozen importlib._bootstrap_external>", line 883, in exec_module
   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "C:\Users\RIFAK\dev\datahub\eduacademy\ai_course_dashboard\urls.py", line 7, in <module>
-    path('', views.index, name='ai_dashbaord_index'),
-AttributeError: module 'ai_course_dashboard.views' has no attribute 'index'
+  File "C:\Users\RIFAK\dev\datahub\eduacademy\ai_course_dashboard\urls.py", line 14, in <module>
+    path('', views.dashboard, name='ai_dashboard'),
+AttributeError: module 'ai_course_dashboard.views' has no attribute 'dashboard'
