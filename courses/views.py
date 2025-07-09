@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from .models import Employee, Course, Enrollment
-from django.db.models import Count
+from django.db import connections
+from collections import defaultdict
 
 def dashboard(request):
     selected_course = request.GET.get('course')
@@ -8,48 +8,89 @@ def dashboard(request):
     selected_grade = request.GET.get('grade')
     selected_status = request.GET.get('status')
 
-    enrollments = Enrollment.objects.all()
+    # 1. Get Employee Info from eduacademy DB
+    with connections['default'].cursor() as cursor:
+        cursor.execute("""
+            SELECT employee_id, name, email, grade, practice, region,
+                   project_manager, delivery_manager, business_leader
+            FROM trainingDataHub_employeeheadcountreportdetails;
+        """)
+        rows = cursor.fetchall()
 
-    if selected_course:
-        enrollments = enrollments.filter(course_id=selected_course)
-    if selected_status:
-        enrollments = enrollments.filter(status=selected_status)
+    employees = []
+    for row in rows:
+        employees.append({
+            'employee_id': str(row[0]),
+            'name': row[1],
+            'email': row[2],
+            'grade': row[3],
+            'practice': row[4],
+            'region': row[5],
+            'project_manager': row[6],
+            'delivery_manager': row[7],
+            'business_leader': row[8]
+        })
 
-    employees = Employee.objects.all()
-    if selected_practice:
-        employees = employees.filter(practice=selected_practice)
+    # 2. Apply Employee Filters
     if selected_grade:
-        employees = employees.filter(grade=selected_grade)
+        employees = [e for e in employees if e['grade'] == selected_grade]
+    if selected_practice:
+        employees = [e for e in employees if e['practice'] == selected_practice]
 
+    # 3. Get Enrollments from openedx DB
+    with connections['openedx'].cursor() as cursor:
+        cursor.execute("""
+            SELECT user_id, course_id, progress, employee_id
+            FROM student_courseenrollment;
+        """)
+        course_rows = cursor.fetchall()
+
+    enrollments = defaultdict(list)
+    for row in course_rows:
+        emp_id = str(row[3])
+        enrollments[emp_id].append({
+            'course_id': row[1],
+            'progress': row[2],
+            'status': 'Completed' if row[2] == 100 else 'Not Completed'
+        })
+
+    # 4. Apply Status and Course Filters
     employee_data = []
     for emp in employees:
-        emp_enrollments = enrollments.filter(employee_id=emp.employee_id)
-        for en in emp_enrollments:
-            course = Course.objects.filter(course_id=en.course_id).first()
+        for enroll in enrollments.get(emp['employee_id'], []):
+            if selected_status and enroll['status'] != selected_status:
+                continue
+            if selected_course and enroll['course_id'] != selected_course:
+                continue
+
             employee_data.append({
                 'employee': emp,
-                'course_name': course.course_name if course else en.course_id,
-                'progress': en.progress,
-                'status': en.status
+                'course_name': enroll['course_id'],  # No lookup from Course table
+                'progress': enroll['progress'],
+                'status': enroll['status']
             })
 
-    total_enrollments = enrollments.count()
-    completed = enrollments.filter(status="Completed").count()
-    not_completed = enrollments.filter(status="Not Completed").count()
+    # 5. Count Stats
+    total_enrollments = len(employee_data)
+    completed = sum(1 for e in employee_data if e['status'] == 'Completed')
+    not_completed = total_enrollments - completed
 
-    grade_wise = employees.values('grade').annotate(total=Count('grade'))
-    practice_wise = employees.values('practice').annotate(total=Count('practice'))
+    # 6. For Dropdown Filters
+    grades = sorted(set(e['grade'] for e in employees))
+    practices = sorted(set(e['practice'] for e in employees))
+    courses = sorted(set(enroll['course_id'] for enroll_list in enrollments.values() for enroll in enroll_list))
 
+    # 7. Context
     context = {
         'employee_data': employee_data,
         'total': total_enrollments,
         'completed': completed,
         'not_completed': not_completed,
-        'grade_wise': grade_wise,
-        'practice_wise': practice_wise,
-        'courses': Course.objects.all(),
-        'grades': Employee.objects.values_list('grade', flat=True).distinct(),
-        'practices': Employee.objects.values_list('practice', flat=True).distinct(),
+        'grade_wise': [{'grade': g, 'total': sum(1 for e in employees if e['grade'] == g)} for g in grades],
+        'practice_wise': [{'practice': p, 'total': sum(1 for e in employees if e['practice'] == p)} for p in practices],
+        'grades': grades,
+        'practices': practices,
+        'courses': courses
     }
 
-    return render(request, 'dashboard.html', context)
+    return render(request, 'ai_course_dashboard/dashboard.html', context)
