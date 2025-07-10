@@ -858,352 +858,312 @@
                         </div>
                     </div>
                     
-                    <div class="filters">
-                        <!-- Practice-specific filters would go here -->
-                        <div class="filter-group">
-                            <label for="practice-select">Select Practice</label>
-                            <select id="practice-select">
-                                <option value="all">All Practices</option>
-                                <option value="data-science">Data Science</option>
-                                <option value="software-eng">Software Engineering</option>
-                                <option value="cloud">Cloud</option>
-                                <option value="cybersecurity">Cybersecurity</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="summary-cards">
-                        <div class="card">
-                            <h3>Practice Completion Rate</h3>
-                            <div class="value">72%</div>
-                            <div class="change positive">
-                                <i class="fas fa-arrow-up"></i>
-                                <span>5% from last quarter</span>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <h3>Employees Enrolled</h3>
-                            <div class="value">450</div>
-                            <div class="change positive">
-                                <i class="fas fa-arrow-up"></i>
-                                <span>15% from last quarter</span>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <h3>Avg. Completion Time</h3>
-                            <div class="value">14 days</div>
-                            <div class="change negative">
-                                <i class="fas fa-arrow-down"></i>
-                                <span>2 days longer</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="charts-container">
-                        <div class="chart-card">
-                            <h3>Completion by Course</h3>
-                            <div class="chart-container">
-                                <canvas id="practiceCourseChart"></canvas>
-                            </div>
-                        </div>
-                        <div class="chart-card">
-                            <h3>Completion by Grade Level</h3>
-                            <div class="chart-container">
-                                <canvas id="practiceGradeChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="leaderboard">
-                        <h3>Employee Completion Breakdown</h3>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Employee</th>
-                                    <th>Grade</th>
-                                    <th>Courses Enrolled</th>
-                                    <th>Courses Completed</th>
-                                    <th>Completion Rate</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>John Smith</td>
-                                    <td>Senior</td>
-                                    <td>5</td>
-                                    <td>4</td>
-                                    <td>80%</td>
-                                    <td><span class="badge badge-success">On Track</span></td>
-                                </tr>
-                                <tr>
-                                    <td>Sarah Johnson</td>
-                                    <td>Lead</td>
-                                    <td>3</td>
-                                    <td>3</td>
-                                    <td>100%</td>
-                                    <td><span class="badge badge-success">Completed</span></td>
-                                </tr>
-                                <tr>
-                                    <td>Mike Williams</td>
-                                    <td>Associate</td>
-                                    <td>4</td>
-                                    <td>1</td>
-                                    <td>25%</td>
-                                    <td><span class="badge badge-warning">Behind</span></td>
-                                </tr>
-                                <tr>
-                                    <td>Emily Brown</td>
-                                    <td>Principal</td>
-                                    <td>2</td>
-                                    <td>2</td>
-                                    <td>100%</td>
-                                    <td><span class="badge badge-success">Completed</span></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                    <form method="get" action=".">
+    <div class="filters">
+        <!-- Practice Dropdown -->
+        <div class="filter-group">
+            <label for="practice-select">Select Practice</label>
+            <select id="practice-select" name="practice">
+                <option value="">All Practices</option>
+                {% for p in practices %}
+                    <option value="{{ p }}" {% if selected_practice == p %}selected{% endif %}>{{ p }}</option>
+                {% endfor %}
+            </select>
+        </div>
 
-                <!-- Grade View Tab -->
-                <div class="tab-content" id="grade-view">
-                    <div class="page-title">
-                        <h1>Grade View Analytics</h1>
-                        <div class="export-buttons">
-                            <button class="btn btn-outline"><i class="fas fa-file-csv"></i> Export CSV</button>
-                            <button class="btn btn-primary"><i class="fas fa-file-excel"></i> Export Excel</button>
-                        </div>
-                    </div>
-                    
-                    <div class="filters">
-                        <div class="filter-group">
-                            <label for="grade-select">Select Grade</label>
-                            <select id="grade-select">
-                                <option value="all">All Grades</option>
-                                <option value="associate">Associate</option>
-                                <option value="senior">Senior</option>
-                                <option value="lead">Lead</option>
-                                <option value="principal">Principal</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="summary-cards">
-                        <div class="card">
-                            <h3>Grade Completion Rate</h3>
-                            <div class="value">68%</div>
-                            <div class="change positive">
-                                <i class="fas fa-arrow-up"></i>
-                                <span>7% from last quarter</span>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <h3>Employees in Grade</h3>
-                            <div class="value">320</div>
-                            <div class="change positive">
-                                <i class="fas fa-arrow-up"></i>
-                                <span>8% from last quarter</span>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <h3>Avg. Courses per Employee</h3>
-                            <div class="value">2.8</div>
-                            <div class="change negative">
-                                <i class="fas fa-arrow-down"></i>
-                                <span>0.3 less than target</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="charts-container">
-                        <div class="chart-card">
-                            <h3>Completion by Practice</h3>
-                            <div class="chart-container">
-                                <canvas id="gradePracticeChart"></canvas>
-                            </div>
-                        </div>
-                        <div class="chart-card">
-                            <h3>Completion Trend by Grade</h3>
-                            <div class="chart-container">
-                                <canvas id="gradeTrendChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="leaderboard">
-                        <h3>Grade Comparison</h3>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Grade</th>
-                                    <th>Employees</th>
-                                    <th>Courses Enrolled</th>
-                                    <th>Courses Completed</th>
-                                    <th>Completion Rate</th>
-                                    <th>Trend</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Principal</td>
-                                    <td>45</td>
-                                    <td>135</td>
-                                    <td>121</td>
-                                    <td>90%</td>
-                                    <td><i class="fas fa-arrow-up text-success"></i></td>
-                                </tr>
-                                <tr>
-                                    <td>Lead</td>
-                                    <td>120</td>
-                                    <td>360</td>
-                                    <td>270</td>
-                                    <td>75%</td>
-                                    <td><i class="fas fa-arrow-up text-success"></i></td>
-                                </tr>
-                                <tr>
-                                    <td>Senior</td>
-                                    <td>200</td>
-                                    <td>600</td>
-                                    <td>390</td>
-                                    <td>65%</td>
-                                    <td><i class="fas fa-arrow-up text-success"></i></td>
-                                </tr>
-                                <tr>
-                                    <td>Associate</td>
-                                    <td>300</td>
-                                    <td>900</td>
-                                    <td>510</td>
-                                    <td>57%</td>
-                                    <td><i class="fas fa-arrow-down text-danger"></i></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+        <!-- Submit Button -->
+        <div class="filter-group">
+            <label>&nbsp;</label><br>
+            <button type="submit" class="btn btn-primary">Apply Filter</button>
+        </div>
+    </div>
+</form>
 
-                <!-- Employee View Tab -->
-                <div class="tab-content" id="employee-view">
-                    <div class="page-title">
-                        <h1>Employee Completion Data</h1>
-                        <div class="export-buttons">
-                            <button class="btn btn-outline"><i class="fas fa-file-csv"></i> Export CSV</button>
-                            <button class="btn btn-primary"><i class="fas fa-file-excel"></i> Export Excel</button>
-                        </div>
-                    </div>
-                    
-                    <div class="filters">
-                        <div class="filter-group">
-                            <label for="employee-name">Employee Name</label>
-                            <input type="text" id="employee-name" placeholder="Search by name...">
-                        </div>
-                        <div class="filter-group">
-                            <label for="employee-id">Employee ID</label>
-                            <input type="text" id="employee-id" placeholder="Search by ID...">
-                        </div>
-                        <div class="filter-group">
-                            <label for="employee-status">Completion Status</label>
-                            <select id="employee-status">
-                                <option value="all">All</option>
-                                <option value="completed">Completed</option>
-                                <option value="in-progress">In Progress</option>
-                                <option value="not-started">Not Started</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="leaderboard">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Employee ID</th>
-                                    <th>Name</th>
-                                    <th>Grade</th>
-                                    <th>Practice</th>
-                                    <th>Courses Enrolled</th>
-                                    <th>Courses Completed</th>
-                                    <th>Completion %</th>
-                                    <th>Last Activity</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>EMP1001</td>
-                                    <td>John Smith</td>
-                                    <td>Senior</td>
-                                    <td>Data Science</td>
-                                    <td>5</td>
-                                    <td>4</td>
-                                    <td>80%</td>
-                                    <td>2 days ago</td>
-                                    <td>
-                                        <button class="btn btn-outline btn-sm"><i class="fas fa-eye"></i></button>
-                                        <button class="btn btn-outline btn-sm"><i class="fas fa-edit"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>EMP1002</td>
-                                    <td>Sarah Johnson</td>
-                                    <td>Lead</td>
-                                    <td>Cloud</td>
-                                    <td>3</td>
-                                    <td>3</td>
-                                    <td>100%</td>
-                                    <td>1 week ago</td>
-                                    <td>
-                                        <button class="btn btn-outline btn-sm"><i class="fas fa-eye"></i></button>
-                                        <button class="btn btn-outline btn-sm"><i class="fas fa-edit"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>EMP1003</td>
-                                    <td>Mike Williams</td>
-                                    <td>Associate</td>
-                                    <td>Software Engineering</td>
-                                    <td>4</td>
-                                    <td>1</td>
-                                    <td>25%</td>
-                                    <td>3 weeks ago</td>
-                                    <td>
-                                        <button class="btn btn-outline btn-sm"><i class="fas fa-eye"></i></button>
-                                        <button class="btn btn-outline btn-sm"><i class="fas fa-edit"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>EMP1004</td>
-                                    <td>Emily Brown</td>
-                                    <td>Principal</td>
-                                    <td>Cybersecurity</td>
-                                    <td>2</td>
-                                    <td>2</td>
-                                    <td>100%</td>
-                                    <td>5 days ago</td>
-                                    <td>
-                                        <button class="btn btn-outline btn-sm"><i class="fas fa-eye"></i></button>
-                                        <button class="btn btn-outline btn-sm"><i class="fas fa-edit"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>EMP1005</td>
-                                    <td>David Lee</td>
-                                    <td>Senior</td>
-                                    <td>Data Science</td>
-                                    <td>3</td>
-                                    <td>2</td>
-                                    <td>67%</td>
-                                    <td>1 day ago</td>
-                                    <td>
-                                        <button class="btn btn-outline btn-sm"><i class="fas fa-eye"></i></button>
-                                        <button class="btn btn-outline btn-sm"><i class="fas fa-edit"></i></button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+<!-- Summary Cards -->
+<div class="summary-cards">
+    <div class="card">
+        <h3>Practice Completion Rate</h3>
+        <div class="value">
+            {% if total > 0 %}
+                {{ completed|divisibleby:total|floatformat:0 }}%
+            {% else %}0%{% endif %}
+        </div>
+        <div class="change positive">
+            <i class="fas fa-arrow-up"></i>
+            <span>5% from last quarter</span>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>Employees Enrolled</h3>
+        <div class="value">{{ total }}</div>
+        <div class="change positive">
+            <i class="fas fa-arrow-up"></i>
+            <span>15% from last quarter</span>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>Avg. Completion Time</h3>
+        <div class="value">14 days</div> <!-- Placeholder -->
+        <div class="change negative">
+            <i class="fas fa-arrow-down"></i>
+            <span>2 days longer</span>
+        </div>
+    </div>
+</div>
+
+<!-- Charts -->
+<div class="charts-container">
+    <div class="chart-card">
+        <h3>Completion by Course</h3>
+        <div class="chart-container">
+            <canvas id="practiceCourseChart"></canvas>
+        </div>
+    </div>
+
+    <div class="chart-card">
+        <h3>Completion by Grade Level</h3>
+        <div class="chart-container">
+            <canvas id="practiceGradeChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Leaderboard Table -->
+<div class="leaderboard">
+    <h3>Employee Completion Breakdown</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Employee</th>
+                <th>Grade</th>
+                <th>Courses Enrolled</th>
+                <th>Courses Completed</th>
+                <th>Completion Rate</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for emp in employee_data %}
+                <tr>
+                    <td>{{ emp.employee.name }}</td>
+                    <td>{{ emp.employee.grade }}</td>
+                    <td>1</td>
+                    <td>{% if emp.status == "Completed" %}1{% else %}0{% endif %}</td>
+                    <td>
+                        {% if emp.status == "Completed" %}
+                            100%
+                        {% else %}
+                            {{ emp.progress }}%
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if emp.status == "Completed" %}
+                            <span class="badge badge-success">Completed</span>
+                        {% elif emp.progress >= 50 %}
+                            <span class="badge badge-warning">On Track</span>
+                        {% else %}
+                            <span class="badge badge-danger">Behind</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="6">No employee data found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+
+
+
+
+               <div class="tab-content" id="grade-view">
+    <div class="page-title">
+        <h1>Grade View Analytics</h1>
+        <div class="export-buttons">
+            <button class="btn btn-outline"><i class="fas fa-file-csv"></i> Export CSV</button>
+            <button class="btn btn-primary"><i class="fas fa-file-excel"></i> Export Excel</button>
+        </div>
+    </div>
+
+    <form method="get" action=".">
+        <div class="filters">
+            <div class="filter-group">
+                <label for="grade-select">Select Grade</label>
+                <select id="grade-select" name="grade">
+                    <option value="">All Grades</option>
+                    {% for g in grades %}
+                        <option value="{{ g }}" {% if selected_grade == g %}selected{% endif %}>{{ g }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="filter-group">
+                <button type="submit" class="btn btn-primary">Apply</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="summary-cards">
+        <div class="card">
+            <h3>Grade Completion Rate</h3>
+            <div class="value">
+                {% if total > 0 %}
+                    {{ completed|divisibleby:total|floatformat:0 }}%
+                {% else %}0%{% endif %}
+            </div>
+            <div class="change positive">
+                <i class="fas fa-arrow-up"></i>
+                <span>7% from last quarter</span>
+            </div>
+        </div>
+        <div class="card">
+            <h3>Employees in Grade</h3>
+            <div class="value">{{ grade_wise|length }}</div>
+            <div class="change positive">
+                <i class="fas fa-arrow-up"></i>
+                <span>8% from last quarter</span>
+            </div>
+        </div>
+        <div class="card">
+            <h3>Avg. Courses per Employee</h3>
+            <div class="value">2.8</div> <!-- Optional: compute if data available -->
+            <div class="change negative">
+                <i class="fas fa-arrow-down"></i>
+                <span>0.3 less than target</span>
             </div>
         </div>
     </div>
+
+    <div class="charts-container">
+        <div class="chart-card">
+            <h3>Completion by Practice</h3>
+            <div class="chart-container">
+                <canvas id="gradePracticeChart"></canvas>
+            </div>
+        </div>
+        <div class="chart-card">
+            <h3>Completion Trend by Grade</h3>
+            <div class="chart-container">
+                <canvas id="gradeTrendChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="leaderboard">
+        <h3>Grade Comparison</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Grade</th>
+                    <th>Employees</th>
+                    <th>Courses Enrolled</th>
+                    <th>Courses Completed</th>
+                    <th>Completion Rate</th>
+                    <th>Trend</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for grade_data in grade_wise %}
+                <tr>
+                    <td>{{ grade_data.grade }}</td>
+                    <td>{{ grade_data.total }}</td>
+                    <td>{{ grade_data.total|add:"5" }}</td> <!-- placeholder for enrolled -->
+                    <td>{{ grade_data.total|add:"3" }}</td> <!-- placeholder for completed -->
+                    <td>
+                        {% with rate=grade_data.total|add:"3"|divisibleby:grade_data.total %}
+                            {{ rate|floatformat:0 }}%
+                        {% endwith %}
+                    </td>
+                    <td>
+                        <i class="fas fa-arrow-up text-success"></i>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+
+<div class="tab-content" id="employee-view">
+    <div class="page-title">
+        <h1>Employee Completion Data</h1>
+        <div class="export-buttons">
+            <button class="btn btn-outline"><i class="fas fa-file-csv"></i> Export CSV</button>
+            <button class="btn btn-primary"><i class="fas fa-file-excel"></i> Export Excel</button>
+        </div>
+    </div>
+
+    <form method="get" action=".">
+        <div class="filters">
+            <div class="filter-group">
+                <label for="employee-name">Employee Name</label>
+                <input type="text" id="employee-name" name="search" placeholder="Search by name or email..." value="{{ search_query }}">
+            </div>
+            <div class="filter-group">
+                <label for="employee-id">Employee ID</label>
+                <input type="text" id="employee-id" name="search_id" placeholder="Search by ID...">
+            </div>
+            <div class="filter-group">
+                <label for="employee-status">Completion Status</label>
+                <select id="employee-status" name="status">
+                    <option value="">All</option>
+                    {% for s in statuses %}
+                        <option value="{{ s }}" {% if selected_status == s %}selected{% endif %}>{{ s }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="filter-group">
+                <button class="btn btn-primary" type="submit">Apply</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="leaderboard">
+        <table>
+            <thead>
+                <tr>
+                    <th>Employee ID</th>
+                    <th>Name</th>
+                    <th>Grade</th>
+                    <th>Practice</th>
+                    <th>Courses Enrolled</th>
+                    <th>Courses Completed</th>
+                    <th>Completion %</th>
+                    <th>Last Activity</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for emp in employee_data %}
+                <tr>
+                    <td>{{ emp.employee.employee_id }}</td>
+                    <td>{{ emp.employee.name }}</td>
+                    <td>{{ emp.employee.grade }}</td>
+                    <td>{{ emp.employee.practice }}</td>
+                    <td>1</td>
+                    <td>{% if emp.status == "Completed" %}1{% else %}0{% endif %}</td>
+                    <td>{{ emp.progress }}%</td>
+                    <td>N/A</td> <!-- Placeholder for last activity -->
+                    <td>
+                        <button class="btn btn-outline btn-sm"><i class="fas fa-eye"></i></button>
+                        <button class="btn btn-outline btn-sm"><i class="fas fa-edit"></i></button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+
 
     <script>
         // Tab Navigation
@@ -1220,27 +1180,19 @@
             });
         });
 
-        // Tree View
-        const employees = [
-            { id: 1, name: "Robert Taylor", role: "Business Leader", practice: "All", completion: "85%", children: [
-                { id: 2, name: "John Doe", role: "Delivery Leader", practice: "Data Science", completion: "80%", children: [
-                    { id: 3, name: "Sarah Williams", role: "Delivery Manager", practice: "Data Science", completion: "78%", children: [
-                        { id: 4, name: "Mike Johnson", role: "Project Manager", practice: "Data Science", completion: "75%", children: [
-                            { id: 5, name: "Emily Davis", role: "Employee", practice: "Data Science", completion: "100%", children: [] },
-                            { id: 6, name: "David Brown", role: "Employee", practice: "Data Science", completion: "60%", children: [] }
-                        ]}
-                    ]}
-                ]},
-                { id: 7, name: "Jane Smith", role: "Delivery Leader", practice: "Cloud", completion: "90%", children: [
-                    { id: 8, name: "Mark Wilson", role: "Delivery Manager", practice: "Cloud", completion: "88%", children: [
-                        { id: 9, name: "Lisa Miller", role: "Project Manager", practice: "Cloud", completion: "85%", children: [
-                            { id: 10, name: "James Wilson", role: "Employee", practice: "Cloud", completion: "80%", children: [] },
-                            { id: 11, name: "Anna Taylor", role: "Employee", practice: "Cloud", completion: "90%", children: [] }
-                        ]}
-                    ]}
-                ]}
-            ]}
-        ];
+     
+<script id="tree-data" type="application/json">
+  {{ tree_view_data|safe }}
+</script>
+
+<script>
+  const employees = JSON.parse(document.getElementById('tree-data').textContent);
+  renderTree(employees, document.getElementById('tree-view'));
+</script>
+
+
+
+
 
         function renderTree(data, parentElement, level = 0) {
             data.forEach(item => {
@@ -1669,7 +1621,7 @@
             });
         });
 
-        // Card click functionality
+        // Card click functionality 
         document.querySelectorAll('.card').forEach(card => {
             card.addEventListener('click', function() {
                 const cardId = this.id;
