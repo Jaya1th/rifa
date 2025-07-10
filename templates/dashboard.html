@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Course Completion Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
+    <style> 
         :root {
             --primary-dark: #0a2e1a;
             --primary: #1a5c2e;
@@ -585,123 +585,164 @@
                         </div>
                     </div>
 
-                    <!-- Filters -->
-                    <div class="filters">
-                        <div class="filter-group">
-                            <label for="course-name">Course Name</label>
-                            <select id="course-name">
-                                <option value="all">All Courses</option>
-                                <option value="ai-fundamentals">AI Fundamentals</option>
-                                <option value="ml-basics">Machine Learning Basics</option>
-                                <option value="deep-learning">Deep Learning</option>
-                                <option value="nlp">Natural Language Processing</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label for="practice">Practice</label>
-                            <select id="practice">
-                                <option value="all">All Practices</option>
-                                <option value="data-science">Data Science</option>
-                                <option value="software-eng">Software Engineering</option>
-                                <option value="cloud">Cloud</option>
-                                <option value="cybersecurity">Cybersecurity</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label for="grade">Grade</label>
-                            <select id="grade">
-                                <option value="all">All Grades</option>
-                                <option value="associate">Associate</option>
-                                <option value="senior">Senior</option>
-                                <option value="lead">Lead</option>
-                                <option value="principal">Principal</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label for="completion-status">Completion Status</label>
-                            <select id="completion-status">
-                                <option value="all">All</option>
-                                <option value="completed">Completed</option>
-                                <option value="not-completed">Not Completed</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label for="delivery-manager">Delivery Manager</label>
-                            <select id="delivery-manager">
-                                <option value="all">All Managers</option>
-                                <option value="john-doe">John Doe</option>
-                                <option value="jane-smith">Jane Smith</option>
-                                <option value="mike-johnson">Mike Johnson</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label for="project-manager">Project Manager</label>
-                            <select id="project-manager">
-                                <option value="all">All PMs</option>
-                                <option value="sarah-williams">Sarah Williams</option>
-                                <option value="david-brown">David Brown</option>
-                                <option value="emily-davis">Emily Davis</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label for="business-leader">Business Leader</label>
-                            <select id="business-leader">
-                                <option value="all">All Leaders</option>
-                                <option value="robert-taylor">Robert Taylor</option>
-                                <option value="lisa-miller">Lisa Miller</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label for="employee-search">Employee ID/Name/Email</label>
-                            <input type="text" id="employee-search" placeholder="Search employees...">
-                        </div>
-                        <div class="filter-group">
-                            <label for="region">Region</label>
-                            <select id="region">
-                                <option value="all">All Regions</option>
-                                <option value="north-america">North America</option>
-                                <option value="europe">Europe</option>
-                                <option value="asia">Asia</option>
-                                <option value="australia">Australia</option>
-                            </select>
-                        </div>
-                    </div>
+                  <form method="get" action=".">
+    <div class="filters">
+
+        <!-- Course Filter -->
+        <div class="filter-group">
+            <label for="course-name">Course Name</label>
+            <select id="course-name" name="course">
+                <option value="">All Courses</option>
+                {% for c in courses %}
+                    <option value="{{ c }}" {% if selected_course == c %}selected{% endif %}>{{ c }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Practice Filter -->
+        <div class="filter-group">
+            <label for="practice">Practice</label>
+            <select id="practice" name="practice">
+                <option value="">All Practices</option>
+                {% for p in practices %}
+                    <option value="{{ p }}" {% if selected_practice == p %}selected{% endif %}>{{ p }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Grade Filter -->
+        <div class="filter-group">
+            <label for="grade">Grade</label>
+            <select id="grade" name="grade">
+                <option value="">All Grades</option>
+                {% for g in grades %}
+                    <option value="{{ g }}" {% if selected_grade == g %}selected{% endif %}>{{ g }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Status Filter -->
+        <div class="filter-group">
+            <label for="completion-status">Completion Status</label>
+            <select id="completion-status" name="status">
+                <option value="">All</option>
+                {% for s in statuses %}
+                    <option value="{{ s }}" {% if selected_status == s %}selected{% endif %}>{{ s }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Delivery Manager -->
+        <div class="filter-group">
+            <label for="delivery-manager">Delivery Manager</label>
+            <select id="delivery-manager" name="delivery_manager">
+                <option value="">All Managers</option>
+                {% for d in delivery_managers %}
+                    <option value="{{ d }}" {% if selected_dm == d %}selected{% endif %}>{{ d }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Project Manager -->
+        <div class="filter-group">
+            <label for="project-manager">Project Manager</label>
+            <select id="project-manager" name="project_manager">
+                <option value="">All PMs</option>
+                {% for p in project_managers %}
+                    <option value="{{ p }}" {% if selected_pm == p %}selected{% endif %}>{{ p }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Business Leader -->
+        <div class="filter-group">
+            <label for="business-leader">Business Leader</label>
+            <select id="business-leader" name="business_leader">
+                <option value="">All Leaders</option>
+                {% for b in business_leaders %}
+                    <option value="{{ b }}" {% if selected_bl == b %}selected{% endif %}>{{ b }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Region -->
+        <div class="filter-group">
+            <label for="region">Region</label>
+            <select id="region" name="region">
+                <option value="">All Regions</option>
+                {% for r in regions %}
+                    <option value="{{ r }}" {% if selected_region == r %}selected{% endif %}>{{ r }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Employee Search -->
+        <div class="filter-group">
+            <label for="employee-search">Employee ID/Name/Email</label>
+            <input type="text" id="employee-search" name="search" placeholder="Search employees..." value="{{ search_query }}">
+        </div>
+
+        <!-- Submit Button -->
+        <div class="filter-group">
+            <label>&nbsp;</label><br>
+            <button class="btn btn-primary" type="submit">Apply Filters</button>
+        </div>
+
+    </div>
+</form>
+
 
                     <!-- Summary Cards -->
-                    <div class="summary-cards">
-                        <div class="card" id="total-enrolled">
-                            <h3>Total Enrolled</h3>
-                            <div class="value">1,245</div>
-                            <div class="change positive">
-                                <i class="fas fa-arrow-up"></i>
-                                <span>12% from last month</span>
-                            </div>
-                        </div>
-                        <div class="card" id="completed">
-                            <h3>Completed</h3>
-                            <div class="value">876</div>
-                            <div class="change positive">
-                                <i class="fas fa-arrow-up"></i>
-                                <span>8% from last month</span>
-                            </div>
-                        </div>
-                        <div class="card" id="not-completed">
-                            <h3>Not Completed</h3>
-                            <div class="value">369</div>
-                            <div class="change negative">
-                                <i class="fas fa-arrow-down"></i>
-                                <span>30% of total</span>
-                            </div>
-                        </div>
-                        <div class="card" id="completion-rate">
-                            <h3>Completion Rate</h3>
-                            <div class="value">70.4%</div>
-                            <div class="change positive">
-                                <i class="fas fa-arrow-up"></i>
-                                <span>5% from last month</span>
-                            </div>
-                        </div>
-                    </div>
+                   <div class="summary-cards">
+    <div class="card" id="total-enrolled">
+        <h3>Total Enrolled</h3>
+        <div class="value">{{ total }}</div>
+        <div class="change positive">
+            <i class="fas fa-arrow-up"></i>
+            <span>12% from last month</span>
+        </div>
+    </div>
+
+    <div class="card" id="completed">
+        <h3>Completed</h3>
+        <div class="value">{{ completed }}</div>
+        <div class="change positive">
+            <i class="fas fa-arrow-up"></i>
+            <span>8% from last month</span>
+        </div>
+    </div>
+
+    <div class="card" id="not-completed">
+        <h3>Not Completed</h3>
+        <div class="value">{{ not_completed }}</div>
+        <div class="change negative">
+            <i class="fas fa-arrow-down"></i>
+            <span>
+                {% if total > 0 %}
+                    {{ (not_completed|floatformat:1|add:"0")|floatformat:1 }} ({{ not_completed|divisibleby:total|floatformat:1 }}%)
+                {% else %}
+                    0%
+                {% endif %}
+            </span>
+        </div>
+    </div>
+
+    <div class="card" id="completion-rate">
+        <h3>Completion Rate</h3>
+        <div class="value">
+            {% if total > 0 %}
+                {{ completed|divisibleby:total|floatformat:1 }}%
+            {% else %}
+                0%
+            {% endif %}
+        </div>
+        <div class="change positive">
+            <i class="fas fa-arrow-up"></i>
+            <span>5% from last month</span>
+        </div>
+    </div>
+</div>
+
 
                     <!-- Charts -->
                     <div class="charts-container">
@@ -731,44 +772,56 @@
                                     <th>Completion Rate</th>
                                     <th>Trend</th>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Data Science</td>
-                                    <td>320</td>
-                                    <td>256</td>
-                                    <td><span class="badge badge-success">80%</span></td>
-                                    <td><i class="fas fa-arrow-up text-success"></i></td>
-                                </tr>
-                                <tr>
-                                    <td>Cloud</td>
-                                    <td>280</td>
-                                    <td>210</td>
-                                    <td><span class="badge badge-success">75%</span></td>
-                                    <td><i class="fas fa-arrow-up text-success"></i></td>
-                                </tr>
-                                <tr>
-                                    <td>Software Engineering</td>
-                                    <td>350</td>
-                                    <td>245</td>
-                                    <td><span class="badge badge-success">70%</span></td>
-                                    <td><i class="fas fa-arrow-up text-success"></i></td>
-                                </tr>
-                                <tr>
-                                    <td>Cybersecurity</td>
-                                    <td>195</td>
-                                    <td>117</td>
-                                    <td><span class="badge badge-warning">60%</span></td>
-                                    <td><i class="fas fa-arrow-down text-danger"></i></td>
-                                </tr>
-                                <tr>
-                                    <td>UX Design</td>
-                                    <td>100</td>
-                                    <td>50</td>
-                                    <td><span class="badge badge-warning">50%</span></td>
-                                    <td><i class="fas fa-arrow-down text-danger"></i></td>
-                                </tr>
-                            </tbody>
+                            </thead><tbody>
+    {% for item in practice_wise %}
+        {% with total=item.total %}
+            {% with practice=item.practice %}
+                {% with completed=employee_data|dictsort:"employee.practice"|select:"employee.practice"|filter:"employee.practice"|length %}
+                    <tr>
+                        <td>{{ practice }}</td>
+                        <td>{{ total }}</td>
+                        <td>
+                            {{ employee_data|selectattr:"employee.practice"|"equalto":practice|selectattr:"status"|"equalto":"Completed"|list|length }}
+                        </td>
+                        <td>
+                            {% with 
+                                comp=employee_data|selectattr:"employee.practice"|"equalto":practice|selectattr:"status"|"equalto":"Completed"|list|length
+                            %}
+                                {% if total > 0 %}
+                                    {% with rate=comp|divisibleby:total %}
+                                        <span class="badge 
+                                            {% if rate|floatformat:0 >= 70 %}
+                                                badge-success
+                                            {% elif rate|floatformat:0 >= 50 %}
+                                                badge-warning
+                                            {% else %}
+                                                badge-danger
+                                            {% endif %}
+                                        ">
+                                            {{ rate|floatformat:0 }}%
+                                        </span>
+                                    {% endwith %}
+                                {% else %}
+                                    <span class="badge badge-secondary">0%</span>
+                                {% endif %}
+                            {% endwith %}
+                        </td>
+                        <td>
+                            {% if total > 0 and comp|divisibleby:total|floatformat:0 >= 70 %}
+                                <i class="fas fa-arrow-up text-success"></i>
+                            {% else %}
+                                <i class="fas fa-arrow-down text-danger"></i>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endwith %}
+            {% endwith %}
+        {% endwith %}
+    {% empty %}
+        <tr><td colspan="5">No data available.</td></tr>
+    {% endfor %}
+</tbody>
+
                         </table>
                     </div>
 
